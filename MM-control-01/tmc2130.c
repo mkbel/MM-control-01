@@ -343,14 +343,20 @@ uint8_t tmc2130_rx(uint8_t axis, uint8_t addr, uint32_t* rval)
 //! @brief Read global error flags for all axes
 //! @retval 0 no error
 //! @retval >0 error, bit flag set for each axis
-uint8_t tmc2130_read_gstat()
+uint16_t tmc2130_read_gstat()
 {
-    uint8_t retval = 0;
+    uint16_t retval = 0;
     for (uint8_t axis = AX_PUL; axis <= AX_IDL ; ++ axis)
     {
         uint32_t result;
         tmc2130_rd(axis, TMC2130_REG_GSTAT, &result);
-        if (result && 0x6) retval += (1 << axis);
+        if (result & 0x7)
+        {
+            if (1 & result) retval |= 3;
+            if (2 & result) retval |= 3 << 2;
+            if (4 & result) retval |= 3 << 4;
+            retval |= (1 << (axis + 6));
+        }
     }
     return retval;
 }
