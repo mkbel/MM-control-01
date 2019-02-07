@@ -6,8 +6,8 @@
 #include <stdio.h>
 
 void manual_extruder_selector();
-void unrecoverable_error();
-void drive_error();
+void unrecoverable_error(uint16_t leds);
+void drive_error(uint16_t leds);
 void check_filament_not_present();
 void filament_presence_signaler();
 

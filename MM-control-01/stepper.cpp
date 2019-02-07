@@ -54,6 +54,8 @@ void do_pulley_step()
 	asm("nop");
 	pulley_step_pin_reset();
 	asm("nop");
+	uint16_t errLeds = tmc2130_read_gstat();
+	if (errLeds) drive_error(errLeds);
 }
 
 
@@ -196,6 +198,8 @@ void move_proportional(int _idler, int _selector)
 		_idler_pos = _idler_pos + _idler_step;
 
 		delayMicroseconds(_speed);
+	    uint16_t errLeds = tmc2130_read_gstat();
+	    if (errLeds) drive_error(errLeds);
 		if (_speed > 900 && _selector > _start) { _speed = _speed - 10; }
 		if (_speed < 2500 && _selector < _end) { _speed = _speed + 10; }
 

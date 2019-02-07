@@ -72,11 +72,12 @@ void motion_set_idler_selector(uint8_t idler, uint8_t selector)
         s_idler = idler;
         s_selector = selector;
 
-        if (!tmc2130_read_gstat()) break;
+        uint16_t errLeds = tmc2130_read_gstat();
+        if (!errLeds) break;
         else
         {
-            if (tries == i) unrecoverable_error();
-            drive_error();
+            if (tries == i) unrecoverable_error(errLeds);
+            drive_error(errLeds);
             rehome();
         }
     }
@@ -87,11 +88,12 @@ static void check_idler_drive_error()
     const uint8_t tries = 2;
     for (uint8_t i = 0; i <= tries; ++i)
     {
-        if (!tmc2130_read_gstat()) break;
+        uint16_t errLeds = tmc2130_read_gstat();
+        if (!errLeds) break;
         else
         {
-            if (tries == i) unrecoverable_error();
-            drive_error();
+            if (tries == i) unrecoverable_error(errLeds);
+            drive_error(errLeds);
             rehome_idler();
         }
     }
@@ -178,11 +180,12 @@ void motion_feed_to_bondtech()
             delay = _speed - (micros() - now);
         }
 
-        if (!tmc2130_read_gstat()) break;
+        uint16_t errLeds = tmc2130_read_gstat();
+        if (!errLeds) break;
         else
         {
-            if (tries == tr) unrecoverable_error();
-            drive_error();
+            if (tries == tr) unrecoverable_error(errLeds);
+            drive_error(errLeds);
             rehome_idler();
             unload_to_finda();
         }
@@ -201,10 +204,11 @@ void motion_unload_to_finda()
     for (uint8_t tr = 0; tr <= tries; ++tr)
     {
         unload_to_finda();
-        if (tmc2130_read_gstat() && digitalRead(A1) == 1)
+        uint16_t errLeds = tmc2130_read_gstat();
+        if (errLeds && digitalRead(A1) == 1)
         {
-            if (tries == tr) unrecoverable_error();
-            drive_error();
+            if (tries == tr) unrecoverable_error(errLeds);
+            drive_error(errLeds);
             rehome_idler();
         }
         else

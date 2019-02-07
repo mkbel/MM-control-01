@@ -133,19 +133,19 @@ void check_filament_not_present()
     }
 }
 
-static void signal_drive_error()
+static void signal_drive_error(uint16_t leds)
 {
-    shr16_set_led(0x3ff);
+    shr16_set_led(leds);
     delay(300);
     shr16_set_led(0x000);
     delay(300);
 }
 
-void drive_error()
+void drive_error(uint16_t leds)
 {
     for(uint8_t i = 0; i < 3; ++i)
     {
-        signal_drive_error();
+        signal_drive_error(leds);
     }
     DriveError::increment();
 }
@@ -165,11 +165,11 @@ void drive_error()
 //! @n 1 - active
 //! @n 0 - inactive
 //! @n b - blinking
-void unrecoverable_error()
+void unrecoverable_error(uint16_t leds)
 {
     while (1)
     {
-        signal_drive_error();
+        signal_drive_error(leds);
     }
 }
 
