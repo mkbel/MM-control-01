@@ -341,6 +341,25 @@ uint8_t tmc2130_rx(uint8_t axis, uint8_t addr, uint32_t* rval)
 }
 
 //! @brief Read global error flags for all axes
+//!
+//! LED indication of states
+//! Flags from all axis are logically ORed together, all axis with at least one flag set are ORed together.
+//!
+//! RG | RG | RG | RG | RG | meaning
+//! -- | -- | -- | -- | -- | ------------------------
+//! 00 | 00 | 00 | 00 | bb | reset
+//! 00 | 00 | 00 | bb | 00 | drv_err
+//! 00 | 00 | bb | 00 | 00 | uv_cp
+//! 00 | 0b | 00 | 00 | 00 | pulley
+//! 00 | b0 | 00 | 00 | 00 | selector
+//! 0b | 00 | 00 | 00 | 00 | idler
+//!
+//! @n R - Red LED
+//! @n G - Green LED
+//! @n 1 - active
+//! @n 0 - inactive
+//! @n b - blinks 3 times
+//!
 //! @retval 0 no error
 //! @retval >0 error, bit flag set for each axis
 uint16_t tmc2130_read_gstat()
