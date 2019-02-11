@@ -143,11 +143,8 @@ static void signal_drive_error(uint16_t leds)
 
 void drive_error(uint16_t leds)
 {
-    for(uint8_t i = 0; i < 3; ++i)
-    {
-        signal_drive_error(leds);
-    }
     DriveError::increment();
+    unrecoverable_error(leds);
 }
 
 //! @brief Unrecoverable hardware fault
