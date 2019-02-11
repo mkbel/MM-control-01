@@ -83,6 +83,8 @@ class DriveError
 public:
     static uint16_t get();
     static void increment();
+    static void setLast(uint16_t leds);
+    static uint16_t getLast();
 private:
     static uint8_t getL();
     static void setL(uint8_t lowByte);

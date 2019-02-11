@@ -22,6 +22,7 @@ typedef struct __attribute__ ((packed))
 	uint8_t eepromFilament[800];    //!< Top nibble status, bottom nibble last filament loaded
 	uint8_t eepromDriveErrorCountH;
 	uint8_t eepromDriveErrorCountL[2];
+	uint16_t eepromDriveErrorLast;
 }eeprom_t;
 static_assert(sizeof(eeprom_t) - 2 <= E2END, "eeprom_t doesn't fit into EEPROM available.");
 //! @brief EEPROM layout version
@@ -373,4 +374,14 @@ uint8_t DriveError::getH()
 void DriveError::setH(uint8_t highByte)
 {
     eeprom_update_byte(&(eepromBase->eepromDriveErrorCountH), highByte - 1);
+}
+
+void DriveError::setLast(uint16_t leds)
+{
+    eeprom_update_word(&(eepromBase->eepromDriveErrorLast), leds);
+}
+
+uint16_t DriveError::getLast()
+{
+    return (eeprom_read_word(&(eepromBase->eepromDriveErrorLast)));
 }

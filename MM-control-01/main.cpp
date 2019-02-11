@@ -144,6 +144,7 @@ static void signal_drive_error(uint16_t leds)
 void drive_error(uint16_t leds)
 {
     DriveError::increment();
+    DriveError::setLast(leds);
     unrecoverable_error(leds);
 }
 
@@ -435,6 +436,8 @@ void process_commands(FILE* inout)
 				fprintf_P(inout, PSTR("%dok\n"), fw_buildnr);
 			else if (value == 3) //! S3 Read drive errors
 			    fprintf_P(inout, PSTR("%dok\n"), DriveError::get());
+			else if (value == 4) //! S4 Read last drive error cause
+			    fprintf_P(inout, PSTR("%Xok\n"), DriveError::getLast());
 		}
 		//! F<nr.> <type> filament type. <nr.> filament number, <type> 0, 1 or 2. Does nothing.
 		else if (sscanf_P(line, PSTR("F%d %d"), &value, &value0) > 0)
