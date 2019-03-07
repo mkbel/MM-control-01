@@ -195,9 +195,9 @@ void settings_bowden_length()
 					if (bowdenLength.decrease()) {
 						set_pulley_dir_pull();
 
-						for(auto i = bowdenLength.stepSize; i > 0; --i)
+						for(auto i = bowdenLength.stepSize/2; i > 0; --i)
 						{
-						delayMicroseconds(1200);
+						delayMicroseconds(2400);
 						do_pulley_step();
 						}
 					}
@@ -209,9 +209,9 @@ void settings_bowden_length()
 					if(bowdenLength.increase()) {
 						set_pulley_dir_push();
 
-						for(auto i = bowdenLength.stepSize; i > 0; --i)
+						for(auto i = bowdenLength.stepSize/2; i > 0; --i)
 						{
-							delayMicroseconds(1200);
+							delayMicroseconds(2400);
 							do_pulley_step();
 						}
 					}

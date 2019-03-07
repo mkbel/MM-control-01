@@ -151,7 +151,7 @@ inline int8_t __res(uint8_t axis)
 {
 	switch (axis)
 	{
-	case AX_PUL: return tmc2130_usteps2mres((uint16_t)2);
+	case AX_PUL: return tmc2130_usteps2mres((uint16_t)1);
 	case AX_SEL: return tmc2130_usteps2mres((uint16_t)2);
 	case AX_IDL: return tmc2130_usteps2mres((uint16_t)16);
 	}

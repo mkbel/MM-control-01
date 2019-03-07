@@ -17,9 +17,9 @@
 int active_extruder = 0;
 bool isFilamentLoaded = false;
 
-static const int eject_steps = 2500;
-static const int cut_steps_pre = 700;
-static const int cut_steps_post = 150;
+static const int eject_steps = 1250;
+static const int cut_steps_pre = 350;
+static const int cut_steps_post = 75;
 
 void feed_filament()
 {
@@ -46,17 +46,17 @@ void feed_filament()
 
 		if (digitalRead(A1) == 1) { _loaded = true; _feed = false; };
 		if (buttonClicked() != Btn::none && _delay > 10) { _loaded = false; _feed = false; }
-		delayMicroseconds(4000);
+		delayMicroseconds(8000);
 	} while (_feed);
 
 	if (_loaded)
 	{
 		// unload to PTFE tube
 		set_pulley_dir_pull();
-		for (int i = 600; i > 0; i--)   // 570
+		for (int i = 300; i > 0; i--)   // 570
 		{
 			do_pulley_step();
-			delayMicroseconds(3000);
+			delayMicroseconds(6000);
 		}
 	}
 
@@ -179,7 +179,7 @@ void eject_filament(uint8_t filament)
     {
         do_pulley_step();
         steps++;
-        delayMicroseconds(1500);
+        delayMicroseconds(3000);
     }
 
     motion_disengage_idler();
@@ -196,7 +196,7 @@ void recover_after_eject()
     {
         do_pulley_step();
         steps++;
-        delayMicroseconds(1500);
+        delayMicroseconds(3000);
     }
     motion_disengage_idler();
 
@@ -215,15 +215,15 @@ static bool checkOk()
     set_pulley_dir_pull();
     if (digitalRead(A1) == 1)
     {
-        _steps = 3000;
+        _steps = 1500;
         _endstop_hit = 0;
         do
         {
             do_pulley_step();
-            delayMicroseconds(3000);
+            delayMicroseconds(6000);
             if (digitalRead(A1) == 0) _endstop_hit++;
             _steps--;
-        } while (_steps > 0 && _endstop_hit < 50);
+        } while (_steps > 0 && _endstop_hit < 25);
     }
 
     if (digitalRead(A1) == 0)
@@ -231,15 +231,15 @@ static bool checkOk()
         // looks ok, load filament to FINDA
         set_pulley_dir_push();
 
-        _steps = 3000;
+        _steps = 1500;
         _endstop_hit = 0;
         do
         {
             do_pulley_step();
-            delayMicroseconds(3000);
+            delayMicroseconds(6000);
             if (digitalRead(A1) == 1) _endstop_hit++;
             _steps--;
-        } while (_steps > 0 && _endstop_hit < 50);
+        } while (_steps > 0 && _endstop_hit < 25);
 
         if (_steps == 0)
         {
@@ -251,10 +251,10 @@ static bool checkOk()
             // looks ok !
             // unload to PTFE tube
             set_pulley_dir_pull();
-            for (int i = 600; i > 0; i--)   // 570
+            for (int i = 300; i > 0; i--)   // 570
             {
                 do_pulley_step();
-                delayMicroseconds(3000);
+                delayMicroseconds(6000);
             }
             _ret = true;
         }
@@ -302,8 +302,8 @@ void load_filament_withSensor()
     {
         do_pulley_step();
         _loadSteps++;
-        delayMicroseconds(5500);
-    } while (digitalRead(A1) == 0 && _loadSteps < 1500);
+        delayMicroseconds(11000);
+    } while (digitalRead(A1) == 0 && _loadSteps < 750);
 
 
     // filament did not arrived at FINDA, let's try to correct that
@@ -315,10 +315,10 @@ void load_filament_withSensor()
             {
                 // attempt to correct
                 set_pulley_dir_pull();
-                for (int i = 200; i >= 0; i--)
+                for (int i = 100; i >= 0; i--)
                 {
                     do_pulley_step();
-                    delayMicroseconds(1500);
+                    delayMicroseconds(3000);
                 }
 
                 set_pulley_dir_push();
@@ -327,9 +327,9 @@ void load_filament_withSensor()
                 {
                     do_pulley_step();
                     _loadSteps++;
-                    delayMicroseconds(4000);
+                    delayMicroseconds(8000);
                     if (digitalRead(A1) == 1) _endstop_hit++;
-                } while (_endstop_hit<100 && _loadSteps < 500);
+                } while (_endstop_hit<50 && _loadSteps < 250);
             }
         }
     }
@@ -361,10 +361,10 @@ void load_filament_withSensor()
                     motion_engage_idler();
                     set_pulley_dir_push();
 
-                    for (int i = 0; i < 200; i++)
+                    for (int i = 0; i < 100; i++)
                     {
                         do_pulley_step();
-                        delayMicroseconds(5500);
+                        delayMicroseconds(11000);
                     }
                     motion_disengage_idler();
                     break;
@@ -436,10 +436,10 @@ void unload_filament_withSensor()
 
 
     // move a little bit so it is not a grinded hole in filament
-    for (int i = 100; i > 0; i--)
+    for (int i = 50; i > 0; i--)
     {
         do_pulley_step();
-        delayMicroseconds(5000);
+        delayMicroseconds(10000);
     }
 
 
@@ -452,14 +452,14 @@ void unload_filament_withSensor()
             if (digitalRead(A1) == 1)
             {
                 set_pulley_dir_push();
-                for (int i = 150; i > 0; i--)
+                for (int i = 75; i > 0; i--)
                 {
                     do_pulley_step();
-                    delayMicroseconds(4000);
+                    delayMicroseconds(8000);
                 }
 
                 set_pulley_dir_pull();
-                int _steps = 4000;
+                int _steps = 2000;
                 uint8_t _endstop_hit = 0;
                 do
                 {
@@ -467,7 +467,7 @@ void unload_filament_withSensor()
                     _steps--;
                     delayMicroseconds(3000);
                     if (digitalRead(A1) == 0) _endstop_hit++;
-                } while (_endstop_hit < 100 && _steps > 0);
+                } while (_endstop_hit < 50 && _steps > 0);
             }
             delay(100);
         }
@@ -508,10 +508,10 @@ void unload_filament_withSensor()
                 motion_engage_idler();
                 set_pulley_dir_pull();
 
-                for (int i = 0; i < 200; i++)
+                for (int i = 0; i < 100; i++)
                 {
                     do_pulley_step();
-                    delayMicroseconds(5500);
+                    delayMicroseconds(11000);
                 }
                 motion_disengage_idler();
                 break;
@@ -547,10 +547,10 @@ void unload_filament_withSensor()
         // correct unloading
         // unload to PTFE tube
         set_pulley_dir_pull();
-        for (int i = 450; i > 0; i--)   // 570
+        for (int i = 225; i > 0; i--)   // 570
         {
             do_pulley_step();
-            delayMicroseconds(5000);
+            delayMicroseconds(10000);
         }
     }
     motion_disengage_idler();
@@ -577,13 +577,13 @@ void load_filament_inPrinter()
     motion_engage_idler();
     set_pulley_dir_push();
 
-    const unsigned long fist_segment_delay = 2600;
+    const unsigned long fist_segment_delay = 5200;
 
     tmc2130_init_axis(AX_PUL, tmc2130_mode);
 
     unsigned long delay = fist_segment_delay;
 
-    for (int i = 0; i < 770; i++)
+    for (int i = 0; i < 385; i++)
     {
         delayMicroseconds(delay);
         unsigned long now = micros();
