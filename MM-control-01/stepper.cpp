@@ -75,7 +75,7 @@ bool home_idler()
 	int _c = 0;
 	int _l = 0;
 
-	tmc2130_init(HOMING_MODE);
+	tmc2130_init(Homing_modes);
 
 	move(-10, 0, 0); // move a bit in opposite direction
 
@@ -113,7 +113,7 @@ bool home_selector()
     // if FINDA is sensing filament do not home
     check_filament_not_present();
 
-    tmc2130_init(HOMING_MODE);
+    tmc2130_init(Homing_modes);
 	 
     move(0, -100,0); // move a bit in opposite direction
 

@@ -134,7 +134,7 @@ static void unload_to_finda()
         if (_unloadSteps < _second_point && _unloadSteps > 5000)
         {
             if (_speed > 550) _speed = _speed - 1;
-            if (_speed > 250 && (NORMAL_MODE == tmc2130_mode)) _speed = _speed - 1;
+            if (_speed > 250 && (Normal_modes == tmc2130_mode)) _speed = _speed - 1;
         }
 
         delayMicroseconds(_speed);
@@ -164,13 +164,13 @@ void motion_feed_to_bondtech()
                 if (_speed > 2600) _speed = _speed - 4;
                 if (_speed > 1300) _speed = _speed - 2;
                 if (_speed > 650) _speed = _speed - 1;
-                if (_speed > 350 && (NORMAL_MODE == tmc2130_mode) && s_has_door_sensor) _speed = _speed - 1;
+                if (_speed > 350 && (Normal_modes == tmc2130_mode) && s_has_door_sensor) _speed = _speed - 1;
             }
             if (i > (steps - 800) && _speed < 2600) _speed = _speed + 10;
             if ('A' == getc(uart_com))
             {
                 s_has_door_sensor = true;
-                tmc2130_disable_axis(AX_PUL, tmc2130_mode);
+                tmc2130_disable_axis(AX_PUL, tmc2130_mode.pulley);
                 motion_disengage_idler();
                 return;
             }

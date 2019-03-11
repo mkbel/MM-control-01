@@ -22,7 +22,7 @@
 #include "motion.h"
 
 
-uint8_t tmc2130_mode = NORMAL_MODE;
+Modes tmc2130_mode = Normal_modes;
 
 #if (UART_COM == 0)
 FILE* uart_com = uart0io;
@@ -287,7 +287,7 @@ void setup()
         state = S::Setup;
     }
 
-    tmc2130_init(HOMING_MODE);
+    tmc2130_init(Homing_modes);
     tmc2130_read_gstat(); //consume reset after power up
     uint8_t filament;
     if(FilamentLoaded::get(filament))
@@ -490,8 +490,8 @@ void process_commands(FILE* inout)
 			//! M0 set to normal mode
 			//!@n M1 set to stealth mode
 			switch (value) {
-				case 0: tmc2130_mode = NORMAL_MODE; break;
-				case 1: tmc2130_mode = STEALTH_MODE; break;
+				case 0: tmc2130_mode = Normal_modes; break;
+				case 1: tmc2130_mode = Stealth_modes; break;
 				default: return;
 			}
 

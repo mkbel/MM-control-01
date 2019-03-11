@@ -31,7 +31,7 @@ void feed_filament()
 	motion_engage_idler();
 
 	set_pulley_dir_push();
-	if(tmc2130_mode == NORMAL_MODE)	
+	if(tmc2130_mode.pulley == Mode::Normal)
 		tmc2130_init_axis_current_normal(AX_PUL, 1, 15);
 	else
 		tmc2130_init_axis_current_stealth(AX_PUL, 1, 15); //probably needs tuning of currents
@@ -62,7 +62,7 @@ void feed_filament()
 
 
 
-	tmc2130_disable_axis(AX_PUL, tmc2130_mode);
+	tmc2130_disable_axis(AX_PUL, tmc2130_mode.pulley);
 	motion_disengage_idler();
 	shr16_set_led(1 << 2 * (4 - active_extruder));
 }
@@ -125,7 +125,7 @@ void mmctl_cut_filament(uint8_t filament)
     if (isFilamentLoaded)  unload_filament_withSensor();
 
     feed_filament();
-    tmc2130_init_axis(AX_PUL, tmc2130_mode);
+    tmc2130_init_axis(AX_PUL, tmc2130_mode.pulley);
 
     motion_set_idler_selector(filament, filament + 1);
 
@@ -168,7 +168,7 @@ void eject_filament(uint8_t filament)
 
     if (isFilamentLoaded)  unload_filament_withSensor();
 
-    tmc2130_init_axis(AX_PUL, tmc2130_mode);
+    tmc2130_init_axis(AX_PUL, tmc2130_mode.pulley);
 
     motion_set_idler_selector(filament, selector_position);
 
@@ -183,13 +183,13 @@ void eject_filament(uint8_t filament)
     }
 
     motion_disengage_idler();
-    tmc2130_disable_axis(AX_PUL, tmc2130_mode);
+    tmc2130_disable_axis(AX_PUL, tmc2130_mode.pulley);
 }
 
 //! @brief restore state before eject filament
 void recover_after_eject()
 {
-    tmc2130_init_axis(AX_PUL, tmc2130_mode);
+    tmc2130_init_axis(AX_PUL, tmc2130_mode.pulley);
     motion_engage_idler();
     set_pulley_dir_pull();
     for (int steps = 0; steps < eject_steps; ++steps)
@@ -201,7 +201,7 @@ void recover_after_eject()
     motion_disengage_idler();
 
     motion_set_idler_selector(active_extruder);
-    tmc2130_disable_axis(AX_PUL, tmc2130_mode);
+    tmc2130_disable_axis(AX_PUL, tmc2130_mode.pulley);
 }
 
 static bool checkOk()
@@ -276,11 +276,11 @@ static bool checkOk()
 //! @retval false failure
 bool mmctl_IsOk()
 {
-    tmc2130_init_axis(AX_PUL, tmc2130_mode);
+    tmc2130_init_axis(AX_PUL, tmc2130_mode.pulley);
     motion_engage_idler();
     const bool retval = checkOk();
     motion_disengage_idler();
-    tmc2130_disable_axis(AX_PUL, tmc2130_mode);
+    tmc2130_disable_axis(AX_PUL, tmc2130_mode.pulley);
     return retval;
 }
 
@@ -289,7 +289,7 @@ void load_filament_withSensor()
     FilamentLoaded::set(active_extruder);
     motion_engage_idler();
 
-    tmc2130_init_axis(AX_PUL, tmc2130_mode);
+    tmc2130_init_axis(AX_PUL, tmc2130_mode.pulley);
 
     set_pulley_dir_push();
 
@@ -409,14 +409,14 @@ void load_filament_withSensor()
 
     motion_feed_to_bondtech();
 
-    tmc2130_disable_axis(AX_PUL, tmc2130_mode);
+    tmc2130_disable_axis(AX_PUL, tmc2130_mode.pulley);
     isFilamentLoaded = true;  // filament loaded
 }
 
 void unload_filament_withSensor()
 {
     // unloads filament from extruder - filament is above Bondtech gears
-    tmc2130_init_axis(AX_PUL, tmc2130_mode);
+    tmc2130_init_axis(AX_PUL, tmc2130_mode.pulley);
 
     motion_engage_idler(); // if idler is in parked position un-park him get in contact with filament
 
@@ -554,7 +554,7 @@ void unload_filament_withSensor()
         }
     }
     motion_disengage_idler();
-    tmc2130_disable_axis(AX_PUL, tmc2130_mode);
+    tmc2130_disable_axis(AX_PUL, tmc2130_mode.pulley);
     isFilamentLoaded = false; // filament unloaded
 }
 
@@ -579,7 +579,7 @@ void load_filament_inPrinter()
 
     const unsigned long fist_segment_delay = 2600;
 
-    tmc2130_init_axis(AX_PUL, tmc2130_mode);
+    tmc2130_init_axis(AX_PUL, tmc2130_mode.pulley);
 
     unsigned long delay = fist_segment_delay;
 
@@ -597,6 +597,6 @@ void load_filament_inPrinter()
         delay = fist_segment_delay - (micros() - now);
     }
 
-    tmc2130_disable_axis(AX_PUL, tmc2130_mode);
+    tmc2130_disable_axis(AX_PUL, tmc2130_mode.pulley);
     motion_disengage_idler();
 }

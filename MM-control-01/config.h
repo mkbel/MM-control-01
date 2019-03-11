@@ -82,11 +82,6 @@
 #define CURRENT_RUNNING_NORMAL {30, 35, 35}
 #define CURRENT_HOMING {1, 35, 30}
 
-//mode
-#define HOMING_MODE 0
-#define NORMAL_MODE 1
-#define STEALTH_MODE 2
-
 //ADC configuration
 #define ADC_CHAN_MSK      0b0000000000100000 //used AD channels bit mask (ADC5)
 #define ADC_CHAN_CNT      1          //number of used channels)

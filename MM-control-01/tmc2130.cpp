@@ -171,7 +171,7 @@ uint8_t tmc2130_usteps2mres(uint16_t usteps)
 //byte 1 bit 0..5 - curh
 //byte 2 bit 0..5 - curr
 //byte 3 
-int8_t tmc2130_init_axis(uint8_t axis, uint8_t mode)
+int8_t tmc2130_init_axis(uint8_t axis, Mode mode)
 {
 	int8_t ret = 0;
 
@@ -183,19 +183,19 @@ int8_t tmc2130_init_axis(uint8_t axis, uint8_t mode)
 	uint8_t current_homing[3] = CURRENT_HOMING;
 
 	switch (mode) {
-		case HOMING_MODE: ret = tmc2130_init_axis_current_normal(axis, current_holding_normal[axis], current_homing[axis]); break; //drivers in normal mode, homing currents
-		case NORMAL_MODE: ret = tmc2130_init_axis_current_normal(axis, current_holding_normal[axis], current_running_normal[axis]); break; //drivers in normal mode
-		case STEALTH_MODE: ret = tmc2130_init_axis_current_stealth(axis, current_holding_stealth[axis], current_running_stealth[axis]); break; //drivers in stealth mode
+		case Mode::Homing: ret = tmc2130_init_axis_current_normal(axis, current_holding_normal[axis], current_homing[axis]); break; //drivers in normal mode, homing currents
+		case Mode::Normal: ret = tmc2130_init_axis_current_normal(axis, current_holding_normal[axis], current_running_normal[axis]); break; //drivers in normal mode
+		case Mode::Stealth: ret = tmc2130_init_axis_current_stealth(axis, current_holding_stealth[axis], current_running_stealth[axis]); break; //drivers in stealth mode
 		default: break;
 	}
 
 	return ret;
 }
 
-void tmc2130_disable_axis(uint8_t axis, uint8_t mode)
+void tmc2130_disable_axis(uint8_t axis, Mode mode)
 {
 	//temporary solution, use enable pin instead
-	if (mode == STEALTH_MODE) tmc2130_init_axis_current_stealth(axis, 0, 0);
+	if (mode == Mode::Stealth) tmc2130_init_axis_current_stealth(axis, 0, 0);
 	else tmc2130_init_axis_current_normal(axis, 0, 0);
 }
 
@@ -232,7 +232,7 @@ uint8_t tmc2130_check_axis(uint8_t axis)
 
 
 
-int8_t tmc2130_init(uint8_t mode)
+int8_t tmc2130_init(Modes modes)
 {
 	//initialize and power on all axes
 	DDRC |= 0x40;
@@ -253,9 +253,9 @@ int8_t tmc2130_init(uint8_t mode)
 
 	int8_t ret = 0;
 	
-	ret += tmc2130_init_axis(AX_PUL,mode)?-1:0;
-	ret += tmc2130_init_axis(AX_SEL,mode)?-2:0;
-	ret += tmc2130_init_axis(AX_IDL,mode)?-4:0;
+	ret += tmc2130_init_axis(AX_PUL,modes.pulley)?-1:0;
+	ret += tmc2130_init_axis(AX_SEL,modes.selector)?-2:0;
+	ret += tmc2130_init_axis(AX_IDL,modes.idler)?-4:0;
 
 	return ret;
 }
