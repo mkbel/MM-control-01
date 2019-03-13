@@ -43,8 +43,8 @@ inline bool operator== (Modes a, Modes b)
 extern int8_t tmc2130_init(Modes modes);
 
 extern int8_t tmc2130_init_axis(uint8_t axis, Mode mode);
-extern int8_t tmc2130_init_axis_current_normal(uint8_t axis, uint8_t current_h, uint8_t current_r);
-extern int8_t tmc2130_init_axis_current_stealth(uint8_t axis, uint8_t current_h, uint8_t current_r);
+extern int8_t tmc2130_init_axis_current_normal(uint8_t axis, uint8_t current_h, uint8_t current_r, bool enable = true);
+extern int8_t tmc2130_init_axis_current_stealth(uint8_t axis, uint8_t current_h, uint8_t current_r, bool enable = true);
 extern void tmc2130_disable_axis(uint8_t axis, Mode mode);
 
 extern uint8_t tmc2130_check_axis(uint8_t axis);
